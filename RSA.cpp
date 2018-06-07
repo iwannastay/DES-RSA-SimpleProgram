@@ -1,18 +1,18 @@
 #include "RSA.h"
+#include <math.h>
 
 int RSA_Encryption(int _Msg, int E, int N)
 {
-	int M = _Msg^E;
-	return M % N;
+
+	return S(_Msg, E, N);
 }
 
 int RSA_Decryption(int _Msg, int D, int N)
 {
-	int M = _Msg^D;
-	return M % N;
+	return S(_Msg, D, N);
 }
 
-bool GetKeys(int P, int Q, int *E, int *D,int *N)
+bool GetKeys(int P, int Q, int *E, int *D, int *N)
 {
 	*N = P*Q;
 	int L = (P - 1)* (Q - 1);
@@ -24,8 +24,8 @@ bool GetKeys(int P, int Q, int *E, int *D,int *N)
 		{
 			if (Temp % i == 0)
 			{
-				*E = i;
-				*D = Temp / i;
+				*E = Temp / i;
+				*D = i;
 				n = 0;
 				break;
 			}
@@ -34,4 +34,19 @@ bool GetKeys(int P, int Q, int *E, int *D,int *N)
 	}
 
 	return true;
+}
+
+int S(int B, int D, int N)
+{
+	if (D > 3)
+	{
+		int X = D / 3, Y = D % 3;
+
+		int S1 = S((int)pow(B, 3) % N, X, N);
+		int S2 = S(B, Y, N);
+
+		return (S1*S2) % N;
+	}
+	else
+		return((int)pow(B, D) % N);
 }
