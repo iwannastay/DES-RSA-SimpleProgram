@@ -2,16 +2,17 @@
 #include "des.h"
 #include "RSA.h"
 #include <fstream>
+#include <list>
 
 #define FILE_LEN 500
 
 int main()
 {
 
-	string str = "students",//ÃØÔ¿
-		Input = "i am a student, you are a pig",//Ã÷ÎÄ
-		Output, //ÃÜÎÄ
-		Output2;//½âÃÜ
+	string str = "students",//ç§˜é’¥
+		Input = "i am a student, you are a pig",//æ˜æ–‡
+		Output, //å¯†æ–‡
+		Output2;//è§£å¯†
 
 	char key[9] = { 0 };
 	char file[FILE_LEN+1] = { 0 };
@@ -30,61 +31,62 @@ int main()
 		Msgs.read(file, FILE_LEN);
 		Input = file;
 	}
-	cout << "DES¼ÓÃÜ½âÃÜ\n" << "Ã÷ÎÄ£º" << Input.c_str() << "\n8Î»ÃØÔ¿£º" << str.c_str() << endl;
+	cout << "DESåŠ å¯†è§£å¯†\n" << "æ˜æ–‡ï¼š" << Input.c_str() << "\n8ä½ç§˜é’¥ï¼š" << str.c_str() << endl;
 
 	InitialKeys(str);
 
 	DevisionToStr(Input, Output);
 
-	cout << "ÃÜÎÄ:" << Output.c_str() << endl;
+	cout << "å¯†æ–‡:" << Output.c_str() << endl;
 
 	De_InitialKeys(str);
 
 	Decryption(Output, Output2);
 
-	cout << "½âÃÜ:" << Output2.c_str() << endl;
+	cout << "è§£å¯†:" << Output2.c_str() << endl;
 
-	int Msg = 40;
-	int P = 13;
+	int Msg,Mid,Res;//æ˜æ–‡ï¼Œå¯†æ–‡ï¼Œè§£å¯†
+	int P = 33;
 	int Q = 41;
-	int N;
-	int L;
-	int E;
-	int D;
+	int N,L,E,D;
+	list<int> MidList;
 
-	//int Msg = 3;
-	//int P = 17;
-	//int Q = 11;
-	//int N = 187;
-	//int L = 160;
-	//int E = 7;
-	//int D = 23;
+	
+	Input = "112233445566";
 
-	//int Msg = 3;
-	//int P = 3;
-	//int Q = 11;
-	//int N = 33;
-	//int L = 20;
-	//int E = 3;
-	//int D = 7;
-
-	cout << "\nRSA¼ÓÃÜ½âÃÜ" << "\nÃ÷ÎÄ£º" << Msg << "\nÑ¡ÔñÖÊÊı:" << 13 << " " << 41 << endl;
+	cout << "\nRSAåŠ å¯†è§£å¯†" << "\næ˜æ–‡ï¼š" << Input.c_str() << "\né€‰æ‹©è´¨æ•°:" << P << " " << Q << endl;
 
 	if (GetKeys(P, Q, &E, &D, &N))
 	{
-		cout << "Éú³É¹«Ô¿£¨N,E)£º(" << N << "," << E << ")" << endl;
-		cout << "Éú³ÉÃÜÔ¿£¨N,D)£º(" << N << "," << D << ")" << endl;
+		cout << "ç”Ÿæˆå…¬é’¥ï¼ˆN,E)ï¼š(" << N << "," << E << ")" << endl;
+		cout << "ç”Ÿæˆå¯†é’¥ï¼ˆN,D)ï¼š(" << N << "," << D << ")" << endl;
+		
+		cout << "å¯†æ–‡ï¼š";
 
-		int Mid = RSA_Encryption(Msg, E, N);
+		auto iter = Input.begin();
+		while (iter != Input.end())
+		{
+			Msg = (*iter) - 48;
+			Mid = RSA_Encryption(Msg, E, N);
+			MidList.push_back(Mid);
+			cout << Mid << ",";
+			iter++;
+		}
 
-		cout << "ÃÜÎÄ£º" << Mid << endl;
+		cout << "\nè§£å¯†ï¼š";
 
-		int Res = RSA_Encryption(Mid, E, N);
-
-		cout << "½âÃÜ£º" << Res << endl;
+		auto _iter = MidList.begin();
+		while (_iter != MidList.end())
+		{
+			Res = RSA_Decryption((*_iter), D, N);
+			cout << Res;
+			_iter++;
+		}
+		
 	}
 	else
 		cout << "Fail to Make Keys";
 	return 0;
 }
+
 
