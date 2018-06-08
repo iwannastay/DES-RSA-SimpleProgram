@@ -20,7 +20,7 @@ bool GetKeys(int P, int Q, int *E, int *D, int *N)
 	while (n) {
 		int Temp = (n++)*L + 1;
 		int K = sqrt(Temp);
-		for (int i = 2; i <= L; i++)
+		for (int i = 2; i < L; i++)
 		{
 			if (Temp % i == 0)
 			{
